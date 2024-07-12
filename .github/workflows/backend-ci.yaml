@@ -38,12 +38,14 @@ jobs:
       #   run: pipenv shell
       - name: pipenv install
         run:  cd starter/backend && pipenv install
-      # Run lint
-      # - name: Run lint
-      #   run: cd starter/backend && pipenv run lint
+
       # Run the tests.
       - name: Run test
         run: cd starter/backend && pipenv run test
+
+      # Run lint
+      - name: Run lint
+        run: cd starter/backend && pipenv run lint
 
   build:
     needs: test

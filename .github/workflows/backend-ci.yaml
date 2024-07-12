@@ -39,7 +39,7 @@ jobs:
       - name: pipenv install
         run: |
           cd starter/backend && pipenv install
-          # cd starter/backend && pipenv install flake8 --dev
+          cd starter/backend && pipenv install --dev flake8 
 
       # Run the tests.
       - name: Run test
@@ -47,7 +47,7 @@ jobs:
 
       # Run lint
       - name: Run lint
-        run: cd starter/backend && pipenv --venv
+        run: cd starter/backend && pipenv run lint
 
   build:
     needs: test
@@ -55,7 +55,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.8.x, 3.10.x]
+        python-version: [3.10.x]
 
     steps:
       # Check out the code from the repository.

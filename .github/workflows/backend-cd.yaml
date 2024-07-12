@@ -82,13 +82,14 @@ jobs:
         #   password: ${{ steps.ecr-login.outputs.password }}
           # password: ${{secrets.AWS_SECRET_ACCESS_KEY}}
       - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        # id: login-ecr
+        # uses: aws-actions/amazon-ecr-login@v1
+        run: aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./start/backend/Dockerfile
+          file: ./starter/backend/Dockerfile
           push: true
           tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/backend:${{env.GITHUB_SHA}}
 

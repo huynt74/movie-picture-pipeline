@@ -59,7 +59,7 @@ jobs:
 
       # Run the tests.
       - name: Run test
-        run: cd starter/frontend && npm test
+        run: cd starter/frontend && npm run test
 
   build:
     needs: [lint, test]

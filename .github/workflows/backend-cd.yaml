@@ -84,7 +84,7 @@ jobs:
           context: .
           file: ./start/backend/Dockerfile
           push: true
-          tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/backend:${{GITHUB_SHA}}
+          tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/backend:${{env.GITHUB_SHA}}
 
       - name: Install kubectl
         run: |
@@ -98,6 +98,6 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           cd starter/backend/k8s
-          kustomize edit set image backend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/backend:${{GITHUB_SHA}}
+          kustomize edit set image backend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/backend:${{env.GITHUB_SHA}}
           kustomize build | kubectl apply -f -
         

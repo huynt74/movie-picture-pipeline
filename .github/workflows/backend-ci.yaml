@@ -47,7 +47,7 @@ jobs:
 
       # Run lint
       - name: Run lint
-        run: cd starter/backend && pipenv run lint
+        run: cd starter/backend && pipenv --venv
 
   build:
     needs: test

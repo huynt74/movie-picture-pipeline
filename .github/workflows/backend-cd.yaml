@@ -79,7 +79,8 @@ jobs:
         with:
           registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
           username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ steps.ecr-login.outputs.password }}
+          # password: ${{ steps.ecr-login.outputs.password }}
+          password: ${{secrets.AWS_SECRET_ACCESS_KEY}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4

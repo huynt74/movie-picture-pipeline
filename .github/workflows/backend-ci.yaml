@@ -39,7 +39,7 @@ jobs:
       - name: pipenv install
         run: |
           cd starter/backend && pipenv install
-          cd starter/backend && pipenv install --dev flake8 
+          pipenv install --dev flake8 
 
       # Run the tests.
       - name: Run test

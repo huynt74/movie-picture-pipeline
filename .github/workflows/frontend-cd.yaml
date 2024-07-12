@@ -13,7 +13,7 @@ on:
 env:
   GITHUB_SHA: ${{ github.sha }}
 jobs:
-  buid-test:
+  build-test:
     runs-on: ubuntu-latest
 
     strategy: 

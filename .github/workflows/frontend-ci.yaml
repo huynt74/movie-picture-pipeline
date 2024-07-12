@@ -84,7 +84,7 @@ jobs:
       # Docker build
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-        
+
       - name: Docker build
         if: ${{ success() }}
         run: |
@@ -93,5 +93,4 @@ jobs:
       # Send a console message at completion.
       - run: |
           echo "Hello ${{github.actor}}. You pull to ${{github.repository}} at $(date)."
-
-        
+# kaa

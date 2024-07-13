@@ -88,8 +88,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
-          file: ./starter/backend/Dockerfile
+          context: ./starter
+          file: ./backend/Dockerfile
           push: true
           tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/backend:${{env.GITHUB_SHA}}
 
@@ -107,4 +107,6 @@ jobs:
           cd starter/backend/k8s
           kustomize edit set image backend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/backend:${{env.GITHUB_SHA}}
           kustomize build | kubectl apply -f -
+      - name: Get pods
+        run: kubectl get pods
         

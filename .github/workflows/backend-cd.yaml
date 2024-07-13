@@ -129,7 +129,7 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           cd starter/backend/k8s && kustomize edit set image backend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/backend:${{env.GITHUB_SHA}}
-          kustomize build --validate=false | kubectl apply -f -
+          kustomize build | kubectl apply --validate=false --openapi-patch=false --load_restrictor=none -f -
       - name: Get pods
         run: kubectl get pods
         

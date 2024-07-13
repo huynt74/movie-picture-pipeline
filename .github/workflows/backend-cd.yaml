@@ -130,6 +130,14 @@ jobs:
         run: |
           cd starter/backend/k8s && kustomize edit set image backend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/backend:${{env.GITHUB_SHA}}
           kustomize build | kubectl apply --validate=false --openapi-patch=false -f - 2>&1 | grep -v "error validating"
-      - name: Get pods
-        run: kubectl get pods
-        
+      - name: Get Service URL
+        id: get-service-url
+        run: |
+          SERVICE_URL=$(kubectl get service -l app=backend -o=jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}')
+          echo "::set-output name=service_url::$SERVICE_URL"
+        continue-on-error: true
+
+      - name: Output Service URL
+        if: steps.get-service-url.outputs.service_url != ''
+        run: echo "Service URL: ${{ steps.get-service-url.outputs.service_url }}" >> $GITHUB_ENV
+              

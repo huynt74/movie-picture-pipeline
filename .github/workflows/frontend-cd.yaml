@@ -45,6 +45,8 @@ jobs:
       name: staging
     runs-on: ubuntu-latest
     steps:
+    # Check out the code from the repository.
+      - uses: actions/checkout@v3
       # deploy
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
@@ -78,10 +80,11 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./start/frontend/Dockerfile
+          file: ./starter/frontend/Dockerfile
           push: true
           tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/frontend:${{env.GITHUB_SHA}}
-
+          build-args: |
+            REACT_APP_MOVIE_API_URL=http://localhost:5000
       - name: Install kubectl
         run: |
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -91,9 +94,30 @@ jobs:
       - name: Verify kubectl version
         run: kubectl version --client
 
+      - name: Install kustomize
+        run: |
+          wget -O /tmp/kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.4.0/kustomize_v4.4.0_linux_amd64.tar.gz
+          tar xzf /tmp/kustomize.tar.gz -C /tmp
+          sudo mv /tmp/kustomize /usr/local/bin/kustomize
+          sudo chmod +x /usr/local/bin/kustomize
+          kustomize version
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name your-cluster-name --region your-region
+
       - name: Deploy to Kubernetes
         run: |
           cd starter/frontend/k8s
+          # aws eks update-kubeconfig --name your-cluster-name --region your-region
           kustomize edit set image frontend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/frontend:${{env.GITHUB_SHA}}
-          kustomize build | kubectl apply -f -
+          kustomize build | kubectl apply --validate=false --openapi-patch=false -f -
         
+      - name: Get Service URL
+        id: get-service-url
+        run: |
+          SERVICE_URL=$(kubectl get service -l app=backend -o=jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}')
+          echo "::set-output name=service_url::$SERVICE_URL"
+        continue-on-error: true
+
+      - name: Output Service URL
+        if: steps.get-service-url.outputs.service_url != ''
+        run: echo "Service URL ${{ steps.get-service-url.outputs.service_url }}" >> $GITHUB_ENV

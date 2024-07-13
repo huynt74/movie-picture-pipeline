@@ -125,11 +125,15 @@ jobs:
           sudo mv /tmp/kustomize /usr/local/bin/kustomize
           sudo chmod +x /usr/local/bin/kustomize
           kustomize version
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name your-cluster-name --region your-region
 
       - name: Deploy to Kubernetes
         run: |
-          cd starter/backend/k8s && kustomize edit set image backend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/backend:${{env.GITHUB_SHA}}
-          kustomize build | kubectl apply --validate=false --openapi-patch=false -f - 2>&1 | grep -v "error validating"
+          cd starter/backend/k8s
+          # aws eks update-kubeconfig --name your-cluster-name --region your-region
+          kustomize edit set image backend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/backend:${{env.GITHUB_SHA}}
+          kustomize build | kubectl apply --validate=false --openapi-patch=false -f -
       - name: Get Service URL
         id: get-service-url
         run: |

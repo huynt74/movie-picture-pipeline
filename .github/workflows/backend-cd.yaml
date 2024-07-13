@@ -119,8 +119,13 @@ jobs:
         run: kubectl version --client
 
       - name: Install kustomize
-        uses: docker://gcr.io/cloud-builders/kustomize
-        
+        run: |
+          wget -O /tmp/kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.4.0/kustomize_v4.4.0_linux_amd64.tar.gz
+          tar xzf /tmp/kustomize.tar.gz -C /tmp
+          sudo mv /tmp/kustomize /usr/local/bin/kustomize
+          sudo chmod +x /usr/local/bin/kustomize
+          kustomize version
+
       - name: Deploy to Kubernetes
         run: |
           cd starter/backend/k8s && kustomize edit set image backend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/backend:${{env.GITHUB_SHA}}

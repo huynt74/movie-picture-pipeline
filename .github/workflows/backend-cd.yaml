@@ -103,9 +103,9 @@ jobs:
           # push it to ECR so that it can
           # be deployed to ECS.
           docker build -t $ECR_REGISTRY/backend:$IMAGE_TAG .
-          docker tag ${{IMAGE_REPO_NAME}}:${{IMAGE_TAG}} ${{AWS_ACCOUNT_ID}}.dkr.ecr.${{AWS_DEFAULT_REGION}}.amazonaws.com/${{IMAGE_REPO_NAME}}:${{IMAGE_TAG}}
-          docker push ${{ECR_REGISTRY}}/backend:${{IMAGE_TAG}}
-          echo "image=${{ECR_REGISTRY}}/backend:${{IMAGE_TAG}}" >> $GITHUB_OUTPUT
+          docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+          docker push $ECR_REGISTRY/backend:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/backend:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Install kubectl
         run: |

@@ -51,6 +51,8 @@ jobs:
       name: staging
     runs-on: ubuntu-latest
     steps:
+      # Check out the code from the repository.
+      - uses: actions/checkout@v3
       # deploy
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
@@ -89,7 +91,7 @@ jobs:
       #   uses: docker/build-push-action@v4
       #   with:
       #     context: .
-      #     file: ./backend/Dockerfile
+      #     file: ./starter/backend/Dockerfile
       #     push: true
       #     tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/backend:${{env.GITHUB_SHA}}
       - name: Build, tag, and push image to Amazon ECR

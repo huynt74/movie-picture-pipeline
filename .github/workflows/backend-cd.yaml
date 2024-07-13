@@ -102,7 +102,7 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG .
+          cd starter/backend && docker build -t $ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG .
           # docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
           docker push $ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG" >> $GITHUB_OUTPUT

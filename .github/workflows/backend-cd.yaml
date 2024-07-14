@@ -143,5 +143,5 @@ jobs:
 
       - name: Output Service URL
         if: steps.get-service-url.outputs.service_url != ''
-        run: echo "Service URL ${{ steps.get-service-url.outputs.service_url }}" >> $GITHUB_ENV
+        run: echo "BACKEND_SERVICE_URL=${{ steps.get-service-url.outputs.service_url }}" >> $GITHUB_ENV
               

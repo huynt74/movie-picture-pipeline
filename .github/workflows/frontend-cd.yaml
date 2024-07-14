@@ -89,7 +89,7 @@ jobs:
           push: true
           tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/frontend:${{env.GITHUB_SHA}}
           build-args: |
-            REACT_APP_MOVIE_API_URL=${{ steps.get-service-url.outputs.service_url }}
+            REACT_APP_MOVIE_API_URL=${{ env.BACKEND_SERVICE_URL }}
       - name: Install kubectl
         run: |
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"

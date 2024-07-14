@@ -106,6 +106,7 @@ jobs:
           sudo mv /tmp/kustomize /usr/local/bin/kustomize
           sudo chmod +x /usr/local/bin/kustomize
           kustomize version
+          
       - name: Update kubeconfig
         run: aws eks update-kubeconfig --name cluster --region your-region
 

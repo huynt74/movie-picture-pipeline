@@ -9,6 +9,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install packages
+RUN npm install -g npm@latest
+RUN npm cache clean --force
 RUN npm ci
 
 # Copy code

@@ -82,15 +82,29 @@ jobs:
         #   mask-password: 'false'
         run: aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./starter/frontend/Dockerfile
-          push: true
-          tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/frontend:${{env.GITHUB_SHA}}
-          build-args: |
-            REACT_APP_MOVIE_API_URL=${{ secrets.API_URL }}
+      # - name: Build and push Docker image
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: .
+      #     file: ./starter/frontend/Dockerfile
+      #     push: true
+      #     tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/frontend:${{env.GITHUB_SHA}}
+      #     build-args: |
+      #       REACT_APP_MOVIE_API_URL=${{ secrets.API_URL }}
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{secrets.AWS_DEFAULT_REGION}}.amazonaws.com
+          IMAGE_TAG: ${{ env.GITHUB_SHA }}
+          IMAGE_REPO_NAME: frontend
+        run: |
+          # Build a docker container and
+          # push it to ECR so that it can
+          # be deployed to ECS.
+          cd starter/frontend && docker build --build-arg=REACT_APP_MOVIE_API_URL=${{ secrets.API_URL }} -t $ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG .
+          # docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG" >> $GITHUB_OUTPUT
       # - name: Install kubectl
       #   run: |
       #     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -121,7 +135,7 @@ jobs:
       - name: Get Service URL
         id: get-service-url
         run: |
-          SERVICE_URL=$(kubectl get service -l app=backend -o=jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}')
+          SERVICE_URL=$(kubectl get service -l app=frontend -o=jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}')
           echo "::set-output name=service_url::$SERVICE_URL"
         continue-on-error: true
 
